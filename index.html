@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>PCPのConfig設定</title>
+  <link rel="stylesheet" href="https://unpkg.com/minecraft-framework-css@1.1.9/css/main.css">
+  <link rel="stylesheet" href="dist/minecraft-css-framework-v-1.0.0.css">
+  <style>
+    h1,h2,p,label{
+      color: white !important;
+    }
+    .pad {
+      padding: 20px;
+    }
+    pre {
+      background-color: #f4f4f4;
+      padding: 10px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 15px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body class="bg-primary text-secondary">
+  <nav class="navbar">
+    <div class="navbar-brand">Putyoa Client</div>
+    <ul class="navbar-nav">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Settings</a></li>
+    </ul>
+  </nav>
+  <h1>Putyoa Client Packのsettingについて</h1>
+  <p>
+    下にあるチェックボックスにチェックを入れるとその機能を使えるようになります。<br>
+    保存を押すことでSettings Packがダウンロードされ、有効化することでConfigを弄る事が出来ます。
+  </p>
+
+  <h2>オプションを選んでください</h2>
+   <section class="pad">
+  <label><input type="checkbox" id="Armor_HUD" onclick="soundOn()"> Armor HUD</label><br>
+  <label><input type="checkbox" id="Player_List_Tab" onclick="soundOn()"> Player List Tab</label><br>
+  <label><input type="checkbox" id="World_Name" onclick="soundOn()"> World Name</label><br>
+  <label><input type="checkbox" id="Compass" onclick="soundOn()"> Compass</label><br>
+  <label><input type="checkbox" id="Clock" onclick="soundOn()"> Clock</label><br>
+  <label><input type="checkbox" id="Recovery_Compass" onclick="soundOn()"> Recovery Compass</label><br>
+  <label><input type="checkbox" id="Bottom_Chat" onclick="soundOn()"> Bottom Chat</label><br>
+  <label><input type="checkbox" id="Inventry_HUD" onclick="soundOn()"> Inventry HUD</label><br>
+  <label><input type="checkbox" id="Exp_Progress_Bar" onclick="soundOn()"> Exp Progress Bar</label><br>
+  <label><input type="checkbox" id="Player_Counter" onclick="soundOn()"> Player Counter</label><br>
+  <label><input type="checkbox" id="Item_ID_AUX" onclick="soundOn()"> Item ID AUX</label><br>
+  <label><input type="checkbox" id="Item_ID" onclick="soundOn()"> Item ID</label><br>
+  <label><input type="checkbox" id="Play_Style" onclick="soundOn()"> Play Style</label><br>
+  <label><input type="checkbox" id="Item_TP" onclick="soundOn()"> Item TP</label><br>
+  <label><input type="checkbox" id="Durability_HUD" onclick="soundOn()"> Durability HUD</label><br>
+
+  <h3>内部コード:</h3>
+  <textarea id="codeBlock" class="form-input">// チェックを入れるとコードが表示されます</textarea>
+
+  <button id="saveBtn" class="button-primary">.mcpackとして保存</button>
+</section>
+
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.1.5/dist/jszip.min.js"></script>
+  <script>
+
+function generateUUIDv4() {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
+}
+
+    const codeBlock = document.getElementById('codeBlock');
+    const saveBtn = document.getElementById('saveBtn');
+
+    const checkboxes = {
+      Armor_HUD: { element: document.getElementById('Armor_HUD'), key: "$Armor_HUD" },
+      Player_List_Tab: { element: document.getElementById('Player_List_Tab'), key: "$player_list_tab" },
+      World_Name: { element: document.getElementById('World_Name'), key: "$world_name" },
+      Compass: { element: document.getElementById('Compass'), key: "$compass" },
+      Clock: { element: document.getElementById('Clock'), key: "$clock" },
+      Recovery_Compass: { element: document.getElementById('Recovery_Compass'), key: "$recovery_compass" },
+      Bottom_Chat: { element: document.getElementById('Bottom_Chat'), key: "$bottom_chat" },
+      Inventry_HUD: { element: document.getElementById('Inventry_HUD'), key: "$Inventry_HUD" },
+      Exp_Progress_Bar: { element: document.getElementById('Exp_Progress_Bar'), key: "$Exp_Progress_Bar" },
+      Player_Counter: { element: document.getElementById('Player_Counter'), key: "$Player_Counter" },
+      Item_ID_AUX: { element: document.getElementById('Item_ID_AUX'), key: "$ItemIDAUX" },
+      Item_ID: { element: document.getElementById('Item_ID'), key: "$ItemID" },
+      Play_Style: { element: document.getElementById('Play_Style'), key: "$play_style" },
+      Item_TP: { element: document.getElementById('Item_TP'), key: "$ItemTP" },
+      Durability_HUD: { element: document.getElementById('Durability_HUD'), key: "$DurabilityHUD" }
+    };
+
+    function updateCode() {
+      let generatedCode = '';
+      for (let key in checkboxes) {
+        if (checkboxes[key].element.checked) {
+          generatedCode += `"${checkboxes[key].key}": true,\n`;
+        }
+      }
+      codeBlock.textContent = generatedCode || '// チェックを入れるとコードが表示されます';
+    }
+
+    function saveAsMCpack() {
+  const config = {};
+  for (let key in checkboxes) {
+    config[checkboxes[key].key] = checkboxes[key].element.checked;
+  }
+
+  const jsonContent = JSON.stringify(config, null, 2);
+  const uuid = generateUUIDv4(); // ← ブラウザでUUID生成
+
+  const manifestContent = JSON.stringify({
+    format_version: 2,
+    header: {
+      description: "Putyoa Client Packの設定ファイルを含むパック",
+      name: "Putyoa Client Pack Config",
+      uuid: uuid,
+      version: [1, 0, 0]
+    },
+    modules: [],
+    dependencies: []
+  }, null, 2);
+
+  const zip = new JSZip();
+  zip.folder("ui").file("_global_variables.json", jsonContent);
+  zip.file("manifest.json", manifestContent);
+
+  zip.generateAsync({ type: "blob" }).then(function(content) {
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(content);
+    link.download = "Putyoa_client_setting_pack.mcpack";
+    link.click();
+  });
+}
+
+    for (let key in checkboxes) {
+      checkboxes[key].element.addEventListener('change', updateCode);
+    }
+
+    saveBtn.addEventListener('click', saveAsMCpack);
+
+    updateCode();
+  </script>
+  <script src="https://unpkg.com/minecraft-framework-css@1.1.9/css/assets/script.js"></script>
+
+</body>
+</html>
