@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>PCPのConfig設定</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    pre {
+      background-color: #f4f4f4;
+      padding: 10px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 15px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Putyoa Client Packのsettingについて</h1>
+  <p>
+    下にあるチェックボックスにチェックを入れるとその機能を使えるようになります。<br>
+    保存を押すことでSettings Packがダウンロードされ、有効化することでConfigを弄る事が出来ます。
+  </p>
+
+  <h2>オプションを選んでください</h2>
+  <!-- チェックボックス -->
+  <label><input type="checkbox" id="Armor_HUD"> Armor HUD</label><br>
+  <label><input type="checkbox" id="Player_List_Tab"> Player List Tab</label><br>
+  <label><input type="checkbox" id="World_Name"> World Name</label><br>
+  <label><input type="checkbox" id="Compass"> Compass</label><br>
+  <label><input type="checkbox" id="Clock"> Clock</label><br>
+  <label><input type="checkbox" id="Recovery_Compass"> Recovery Compass</label><br>
+  <label><input type="checkbox" id="Bottom_Chat"> Bottom Chat</label><br>
+  <label><input type="checkbox" id="Inventry_HUD"> Inventry HUD</label><br>
+  <label><input type="checkbox" id="Exp_Progress_Bar"> Exp Progress Bar</label><br>
+  <label><input type="checkbox" id="Player_Counter"> Player Counter</label><br>
+  <label><input type="checkbox" id="Item_ID_AUX"> Item ID AUX</label><br>
+  <label><input type="checkbox" id="Item_ID"> Item ID</label><br>
+  <label><input type="checkbox" id="Play_Style"> Play Style</label><br>
+  <label><input type="checkbox" id="Item_TP"> Item TP</label><br>
+  <label><input type="checkbox" id="Durability_HUD"> Durability HUD</label>
+
+  <h3>内部コード:</h3>
+  <pre id="codeBlock">// チェックを入れるとコードが表示されます</pre>
+
+  <button id="saveBtn">JSONとして保存</button>
+
+  <script>
+    const codeBlock = document.getElementById('codeBlock');
+    const saveBtn = document.getElementById('saveBtn');
+
+    const checkboxes = {
+      Armor_HUD: {
+        element: document.getElementById('Armor_HUD'),
+        key: "$Armor_HUD"
+      },
+      Player_List_Tab: {
+        element: document.getElementById('Player_List_Tab'),
+        key: "$player_list_tab"
+      },
+      World_Name: {
+        element: document.getElementById('World_Name'),
+        key: "$world_name"
+      },
+      Compass: {
+        element: document.getElementById('Compass'),
+        key: "$compass"
+      },
+      Clock: {
+        element: document.getElementById('Clock'),
+        key: "$clock"
+      },
+      Recovery_Compass: {
+        element: document.getElementById('Recovery_Compass'),
+        key: "$recovery_compass"
+      },
+      Bottom_Chat: {
+        element: document.getElementById('Bottom_Chat'),
+        key: "$bottom_chat"
+      },
+      Inventry_HUD: {
+        element: document.getElementById('Inventry_HUD'),
+        key: "$Inventry_HUD"
+      },
+      Exp_Progress_Bar: {
+        element: document.getElementById('Exp_Progress_Bar'),
+        key: "$Exp_Progress_Bar"
+      },
+      Player_Counter: {
+        element: document.getElementById('Player_Counter'),
+        key: "$Player_Counter"
+      },
+      Item_ID_AUX: {
+        element: document.getElementById('Item_ID_AUX'),
+        key: "$ItemIDAUX"
+      },
+      Item_ID: {
+        element: document.getElementById('Item_ID'),
+        key: "$ItemID"
+      },
+      Play_Style: {
+        element: document.getElementById('Play_Style'),
+        key: "$play_style"
+      },
+      Item_TP: {
+        element: document.getElementById('Item_TP'),
+        key: "$ItemTP"
+      },
+      Durability_HUD: {
+        element: document.getElementById('Durability_HUD'),
+        key: "$DurabilityHUD"
+      }
+    };
+
+    function updateCode() {
+      let generatedCode = '';
+      for (let key in checkboxes) {
+        if (checkboxes[key].element.checked) {
+          generatedCode += `"${checkboxes[key].key}": true,\n`;
+        }
+      }
+      codeBlock.textContent = generatedCode || '// チェックを入れるとコードが表示されます';
+    }
+
+    function saveAsJSON() {
+      const config = {};
+      for (let key in checkboxes) {
+      config[checkboxes[key].key] = checkboxes[key].element.checked;
+      }
+      const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = '_global_variables.json';
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+
+    for (let key in checkboxes) {
+      checkboxes[key].element.addEventListener('change', updateCode);
+    }
+
+    saveBtn.addEventListener('click', saveAsJSON);
+
+    updateCode();
+  </script>
+
+</body>
+</html>
