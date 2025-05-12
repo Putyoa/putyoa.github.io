@@ -106,7 +106,7 @@
       }, null, 2);
 
       const zip = new JSZip();
-      zip.folder("ui").file("pcp_config.json", jsonContent);
+      zip.folder("ui").file("_global_variables.json", jsonContent);
       zip.file("manifest.json", manifestContent);
 
       zip.generateAsync({ type: "blob" }).then(function(content) {
